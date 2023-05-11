@@ -1,4 +1,4 @@
-const { client, getAllUsers } = require("./index");
+const { client, getAllUsers,createUser } = require("./index");
 
 async function dropTables() {
   try {
@@ -24,7 +24,10 @@ async function createTables() {
         CREATE TABLE users (
           id SERIAL PRIMARY KEY,
           username varchar(255) UNIQUE NOT NULL,
-          password varchar(255) NOT NULL
+          password varchar(255) NOT NULL,
+          name VARCHAR(255) NOT NULL,
+          location VARCHAR(255) NOT NULL,
+          active BOOLEAN DEFAULT true,
         );
       `);
 
@@ -65,19 +68,21 @@ async function rebuildDB() {
 }
 
 
-async function createUser({ username, password }) {
+async function createUser({ 
+  username, 
+  password,
+  name,
+  location
+}) {
   try {
-    const result = await client.query(
-      `
-        INSERT INTO users(username, password) 
-        VALUES($1, $2) 
-        ON CONFLICT (username) DO NOTHING 
-        RETURNING *;
-      `,
-      [username, password]
-    );
+    const { rows } = await client.query(`
+      INSERT INTO users(username, password, name, location) 
+      VALUES($1, $2, $3, $4) 
+      ON CONFLICT (username) DO NOTHING 
+      RETURNING *;
+    `, [username, password, name, location]);
 
-    return result;
+    return rows;
   } catch (error) {
     throw error;
   }
