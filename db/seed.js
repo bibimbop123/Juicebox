@@ -1,35 +1,33 @@
-const {
-    client,
-    getAllUsers,
-    createUser
-  } = require('./index');
-  
-  async function dropTables() {
-    try {
-      console.log("Starting to drop tables...");
-  
-      await client.query(`
+const { client, getAllUsers } = require("./index");
+
+async function dropTables() {
+  try {
+    console.log("Starting to drop tables...");
+
+    await client.query(`
         DROP TABLE IF EXISTS users;
       `);
-  
-      console.log("Finished dropping tables!");
-    } catch (error) {
-      console.error("Error dropping tables!");
-      throw error;
-    }
+
+    console.log("Finished dropping tables!");
+  } catch (error) {
+    console.error("Error dropping tables!");
+    throw error;
   }
-  
-  async function createTables() {
-    try {
-      console.log("Starting to build tables...");
-  
-      await client.query(`
+}
+
+async function createTables() {
+  try {
+    console.log("Starting to build tables...");
+
+    await client.query(`
+
         CREATE TABLE users (
           id SERIAL PRIMARY KEY,
           username varchar(255) UNIQUE NOT NULL,
           password varchar(255) NOT NULL
         );
       `);
+
   
       console.log("Finished building tables!");
     } catch (error) {
@@ -52,18 +50,40 @@ const {
       throw error;
     }
   }
-  async function rebuildDB() {
-    try {
-      client.connect();
-  
-      await dropTables();
-      await createTables();
-      await createInitialUsers();
-    } catch (error) {
-      throw error;
-    }
+
+
+async function rebuildDB() {
+  try {
+    client.connect();
+
+    await dropTables();
+    await createTables();
+    await createInitialUsers();
+  } catch (error) {
+    throw error;
   }
-  
+}
+
+
+async function createUser({ username, password }) {
+  try {
+    const result = await client.query(
+      `
+        INSERT INTO users(username, password) 
+        VALUES($1, $2) 
+        ON CONFLICT (username) DO NOTHING 
+        RETURNING *;
+      `,
+      [username, password]
+    );
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
+
   
   async function testDB() {
     try {
@@ -78,9 +98,9 @@ const {
       throw error;
     }
   }
-  
-  
+
   rebuildDB()
     .then(testDB)
     .catch(console.error)
     .finally(() => client.end());
+
