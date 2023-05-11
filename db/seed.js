@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const { client, getAllUsers } = require("./index");
 
 async function dropTables() {
@@ -21,6 +20,7 @@ async function createTables() {
     console.log("Starting to build tables...");
 
     await client.query(`
+
         CREATE TABLE users (
           id SERIAL PRIMARY KEY,
           username varchar(255) UNIQUE NOT NULL,
@@ -28,12 +28,29 @@ async function createTables() {
         );
       `);
 
-    console.log("Finished building tables!");
-  } catch (error) {
-    console.error("Error building tables!");
-    throw error;
+  
+      console.log("Finished building tables!");
+    } catch (error) {
+      console.error("Error building tables!");
+      throw error;
+    }
   }
-}
+  async function createInitialUsers() {
+    try {
+      console.log("Starting to create users...");
+  
+      const sandra = await createUser({ username: 'sandra', password: '12345678' });
+      const glamgal = await createUser({ username: 'glamgal', password: '12345678' });
+      console.log(sandra);
+      console.log(glamgal)
+  
+      console.log("Finished creating users!");
+    } catch(error) {
+      console.error("Error creating users!");
+      throw error;
+    }
+  }
+
 
 async function rebuildDB() {
   try {
@@ -47,36 +64,7 @@ async function rebuildDB() {
   }
 }
 
-async function testDB() {
-  try {
-    console.log("Starting to test database...");
 
-    const users = await getAllUsers();
-    console.log("getAllUsers:", users);
-
-    console.log("Finished database tests!");
-  } catch (error) {
-    console.error("Error testing database!");
-    throw error;
-  }
-}
-async function createInitialUsers() {
-  try {
-    console.log("Starting to create users...");
-
-    const albert = await createUser({
-      username: "albert",
-      password: "bertie99",
-    });
-
-    console.log(albert);
-
-    console.log("Finished creating users!");
-  } catch (error) {
-    console.error("Error creating users!");
-    throw error;
-  }
-}
 async function createUser({ username, password }) {
   try {
     const result = await client.query(
@@ -95,31 +83,24 @@ async function createUser({ username, password }) {
   }
 }
 
-// later
-module.exports = {
-  createUser,
-};
-rebuildDB()
-  .then(testDB)
-  .catch(console.error)
-  .finally(() => client.end());
-=======
-const { client } = require('./index');
 
-
-async function testDB() {
-    try {
-      client.connect();
   
-      const { rows } = await client.query(`SELECT * FROM users;`);
-      console.log(rows);
+  async function testDB() {
+    try {
+      console.log("Starting to test database...");
+  
+      const users = await getAllUsers();
+      console.log("getAllUsers:", users);
+  
+      console.log("Finished database tests!");
     } catch (error) {
-      console.error(error);
-    } finally {
-      client.end();
+      console.error("Error testing database!");
+      throw error;
     }
   }
 
-  
-testDB()
->>>>>>> 53e09aece533c976bec5efe59409532a70c9e8f7
+  rebuildDB()
+    .then(testDB)
+    .catch(console.error)
+    .finally(() => client.end());
+
