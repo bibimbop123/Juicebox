@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const { client, getAllUsers } = require("./index");
 
 async function dropTables() {
@@ -102,3 +103,23 @@ rebuildDB()
   .then(testDB)
   .catch(console.error)
   .finally(() => client.end());
+=======
+const { client } = require('./index');
+
+
+async function testDB() {
+    try {
+      client.connect();
+  
+      const { rows } = await client.query(`SELECT * FROM users;`);
+      console.log(rows);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      client.end();
+    }
+  }
+
+  
+testDB()
+>>>>>>> 53e09aece533c976bec5efe59409532a70c9e8f7

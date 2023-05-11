@@ -4,6 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+<<<<<<< HEAD
+=======
+    "test": "echo \"Error: no test specified\" && exit 1",
+>>>>>>> 53e09aece533c976bec5efe59409532a70c9e8f7
     "seed:dev": "nodemon ./db/seed.js"
   },
   "keywords": [],
