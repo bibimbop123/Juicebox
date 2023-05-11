@@ -1,4 +1,4 @@
-const { client, getAllUsers,createUser } = require("./index");
+const { client, getAllUsers } = require("./index");
 
 async function dropTables() {
   try {
