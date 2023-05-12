@@ -1,4 +1,4 @@
-const { client, getAllUsers } = require("./index");
+const { client, getAllUsers, createUser, updateUser } = require("./index");
 
 async function dropTables() {
   try {
@@ -27,7 +27,7 @@ async function createTables() {
           password varchar(255) NOT NULL,
           name VARCHAR(255) NOT NULL,
           location VARCHAR(255) NOT NULL,
-          active BOOLEAN DEFAULT true,
+          active BOOLEAN DEFAULT true
         );
       `);
 
@@ -42,8 +42,8 @@ async function createTables() {
     try {
       console.log("Starting to create users...");
   
-      const sandra = await createUser({ username: 'sandra', password: '12345678' });
-      const glamgal = await createUser({ username: 'glamgal', password: '12345678' });
+      const sandra = await createUser({ username: 'sandra', password: '12345678', name: 'Just Sandra', location:"Ain't tellin"});
+      const glamgal = await createUser({ username: 'glamgal', password: '12345678', name: 'Joshua', location:'Upper East side' });
       console.log(sandra);
       console.log(glamgal)
   
@@ -62,31 +62,14 @@ async function rebuildDB() {
     await dropTables();
     await createTables();
     await createInitialUsers();
+    await updateUser(1, {username: "andy"})
   } catch (error) {
     throw error;
   }
 }
 
 
-async function createUser({ 
-  username, 
-  password,
-  name,
-  location
-}) {
-  try {
-    const { rows } = await client.query(`
-      INSERT INTO users(username, password, name, location) 
-      VALUES($1, $2, $3, $4) 
-      ON CONFLICT (username) DO NOTHING 
-      RETURNING *;
-    `, [username, password, name, location]);
 
-    return rows;
-  } catch (error) {
-    throw error;
-  }
-}
 
 
   
