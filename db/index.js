@@ -39,18 +39,19 @@ async function getAllUsers() {
     }
   
     try {
-      const result = await client.query(`
+      const { rows: [ user ] } = await client.query(`
         UPDATE users
         SET ${ setString }
         WHERE id=${ id }
         RETURNING *;
       `, Object.values(fields));
   
-      return result;
+      return user;
     } catch (error) {
       throw error;
     }
   }
+  
 module.exports = {
     client,
     getAllUsers,

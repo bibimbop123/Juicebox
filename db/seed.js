@@ -73,19 +73,27 @@ async function rebuildDB() {
 
 
   
-  async function testDB() {
-    try {
-      console.log("Starting to test database...");
-  
-      const users = await getAllUsers();
-      console.log("getAllUsers:", users);
-  
-      console.log("Finished database tests!");
-    } catch (error) {
-      console.error("Error testing database!");
-      throw error;
-    }
+async function testDB() {
+  try {
+    console.log("Starting to test database...");
+
+    console.log("Calling getAllUsers")
+    const users = await getAllUsers();
+    console.log("Result:", users);
+
+    console.log("Calling updateUser on users[0]")
+    const updateUserResult = await updateUser(users[0].id,  {
+      name: "Newname Sogood",
+      location: "Lesterville, KY"
+    });
+    console.log("Result:", updateUserResult);
+
+    console.log("Finished database tests!");
+  } catch (error) {
+    console.error("Error testing database!");
+    throw error;
   }
+}
 
   rebuildDB()
     .then(testDB)
