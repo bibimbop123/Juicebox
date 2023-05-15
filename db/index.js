@@ -42,7 +42,7 @@ async function getAllUsers() {
       const { rows: [ user ] } = await client.query(`
         UPDATE users
         SET ${ setString }
-        WHERE id=${ id }
+        WHERE id= ${ id }
         RETURNING *;
       `, Object.values(fields));
   

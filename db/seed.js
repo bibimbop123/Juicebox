@@ -38,6 +38,22 @@ async function createTables() {
       throw error;
     }
   }
+
+  async function createPostsTable(){
+    try {
+      await client.query(`
+    
+      id SERIAL PRIMARY KEY
+      "authorId" INTEGER REFERENCES users(id) NOT NULL
+      title VARCHAR(255) NOT NULL
+      content TEXT NOT NULL
+      active BOOLEAN DEFAULT true`)
+      
+    } catch (error) {
+      console.error(error)
+      
+    }
+  }
   async function createInitialUsers() {
     try {
       console.log("Starting to create users...");
@@ -61,8 +77,10 @@ async function rebuildDB() {
 
     await dropTables();
     await createTables();
+    await createPostsTable();
     await createInitialUsers();
     await updateUser(1, {username: "andy"})
+    
   } catch (error) {
     throw error;
   }
@@ -82,7 +100,7 @@ async function testDB() {
     console.log("Result:", users);
 
     console.log("Calling updateUser on users[0]")
-    const updateUserResult = await updateUser(users[0].id,  {
+    const updateUserResult = await updateUser(users[0].id, {
       name: "Newname Sogood",
       location: "Lesterville, KY"
     });
