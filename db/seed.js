@@ -1,11 +1,18 @@
-const { client, getAllUsers, createUser, updateUser } = require("./index");
+const {
+  client,
+  getAllUsers,
+  createUser,
+  updateUser,
+  updatePost,
+  createPost,
+} = require("./index");
 
 async function dropTables() {
   try {
     console.log("Starting to drop tables...");
 
     await client.query(`
-        DROP TABLE IF EXISTS users;
+        DROP TABLE IF EXISTS posts, users
       `);
 
     console.log("Finished dropping tables!");
@@ -31,45 +38,73 @@ async function createTables() {
         );
       `);
 
-  
-      console.log("Finished building tables!");
-    } catch (error) {
-      console.error("Error building tables!");
-      throw error;
-    }
+    console.log("Finished building tables!");
+  } catch (error) {
+    console.error("Error building tables!");
+    throw error;
   }
+}
 
-  async function createPostsTable(){
-    try {
-      await client.query(`
-  
-      id SERIAL PRIMARY KEY
-      "authorId" INTEGER REFERENCES users(id) NOT NULL
-      title VARCHAR(255) NOT NULL
-      content TEXT NOT NULL
-      active BOOLEAN DEFAULT true`);
-      
-    } catch (error) {
-      console.error(error)
-      
-    }
-  }
-  async function createInitialUsers() {
-    try {
-      console.log("Starting to create users...");
-  
-      const sandra = await createUser({ username: 'sandra', password: '12345678', name: 'Just Sandra', location:"Ain't tellin"});
-      const glamgal = await createUser({ username: 'glamgal', password: '12345678', name: 'Joshua', location:'Upper East side' });
-      console.log(sandra);
-      console.log(glamgal)
-  
-      console.log("Finished creating users!");
-    } catch(error) {
-      console.error("Error creating users!");
-      throw error;
-    }
-  }
+async function createPostsTable() {
+  try {
+    await client.query(`
+      CREATE TABLE posts (
 
+        id SERIAL PRIMARY KEY,
+        "authorId" INTEGER REFERENCES users(id),
+        title VARCHAR(255) NOT NULL,
+        content TEXT NOT NULL,
+        active BOOLEAN DEFAULT true
+        );
+        `);
+    console.log("finished creating posts");
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+async function createInitialUsers() {
+  try {
+    console.log("Starting to create users...");
+
+    const sandra = await createUser({
+      username: "sandra",
+      password: "12345678",
+      name: "Just Sandra",
+      location: "Ain't tellin",
+    });
+    const glamgal = await createUser({
+      username: "glamgal",
+      password: "12345678",
+      name: "Joshua",
+      location: "Upper East side",
+    });
+    console.log(sandra);
+    console.log(glamgal);
+
+    console.log("Finished creating users!");
+  } catch (error) {
+    console.error("Error creating users!");
+    throw error;
+  }
+}
+
+async function createInitialPost() {
+  console.log("creating initial posts");
+  try {
+    const post1 = await createPost({
+      authorId: 1,
+      title: "a great title",
+      content: "we did it",
+    });
+    console.log(post1);
+    console.log("finished creating posts");
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 
 async function rebuildDB() {
   try {
@@ -79,30 +114,27 @@ async function rebuildDB() {
     await createTables();
     await createPostsTable();
     await createInitialUsers();
-    await updateUser(1, {username: "andy"})
-    
+    await createInitialPost();
+    await updateUser(1, { username: "andy" });
+    console.log("updating posts");
+    await updatePost(1, { content: "lorem ipsum" });
   } catch (error) {
     throw error;
   }
 }
 
-
-
-
-
-  
 async function testDB() {
   try {
     console.log("Starting to test database...");
 
-    console.log("Calling getAllUsers")
+    console.log("Calling getAllUsers");
     const users = await getAllUsers();
     console.log("Result:", users);
 
-    console.log("Calling updateUser on users[0]")
+    console.log("Calling updateUser on users[0]");
     const updateUserResult = await updateUser(users[0].id, {
       name: "Newname Sogood",
-      location: "Lesterville, KY"
+      location: "Lesterville, KY",
     });
     console.log("Result:", updateUserResult);
 
@@ -113,8 +145,7 @@ async function testDB() {
   }
 }
 
-  rebuildDB()
-    .then(testDB)
-    .catch(console.error)
-    .finally(() => client.end());
-
+rebuildDB()
+  .then(testDB)
+  .catch(console.error)
+  .finally(() => client.end());
