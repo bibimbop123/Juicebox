@@ -43,11 +43,11 @@ async function createTables() {
     try {
       await client.query(`
     
-      id SERIAL PRIMARY KEY
-      "authorId" INTEGER REFERENCES users(id) NOT NULL
-      title VARCHAR(255) NOT NULL
-      content TEXT NOT NULL
-      active BOOLEAN DEFAULT true`)
+      id SERIAL PRIMARY KEY,
+      "authorId" INTEGER REFERENCES users(id) NOT NULL,
+      title VARCHAR(255) NOT NULL,
+      content TEXT NOT NULL,
+      active BOOLEAN DEFAULT true`);
       
     } catch (error) {
       console.error(error)
