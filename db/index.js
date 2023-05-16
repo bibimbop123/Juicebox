@@ -101,30 +101,31 @@ async function createPost({ authorId, title, content }) {
 }
 async function getAllPosts() {
   try {
-    console.log("getting all posts")
+    // console.log("getting all posts");
     const { rows } = await client.query(
       `SELECT * 
         FROM posts;
       `
+    );
 
-  )
-
-return rows;
-    }
-    catch (error) {
+    return rows;
+  } catch (error) {
     throw error;
   }
 }
 
 async function getPostsByUser(userId) {
   try {
-    console.log("getting all posts by users")
-    const { rows } = await client.query(`
+    // console.log("getting all posts by users");
+    const { rows } = await client.query(
+      `
       SELECT * FROM posts
       WHERE "authorId"=$1;
-    `, [userId]);
+    `,
+      [userId]
+    );
 
-    console.log({rows});
+    // console.log({ rows });
     return rows;
   } catch (error) {
     throw error;
@@ -136,36 +137,35 @@ async function getUserById(id) {
     console.log("get user by Id");
     const { rows } = await client.query(
       `
-     SELECT username, name, location FROM users
+     SELECT * FROM users
      WHERE id = $1;
      `,
       [id]
-    )
-    if (!{rows}) {return null} else {getPostsByUser};
-
-
-
-    console.log("user:", rows);
-    return rows;
+    );
+    if (!{ rows }) {
+      return null;
+    } else {
+      delete rows[0].password;
+      rows.posts = await getPostsByUser(id);
+      console.log(rows);
+      return rows;
+    }
   } catch (error) {
     throw error;
   }
 }
 
- // first get the user (NOTE: Remember the query returns 
-    // (1) an object that contains 
-    // (2) a `rows` array that (in this case) will contain 
-    // (3) one object, which is our user.
-  // if it doesn't exist (if there are no `rows` or `rows.length`), return null
+// first get the user (NOTE: Remember the query returns
+// (1) an object that contains
+// (2) a `rows` array that (in this case) will contain
+// (3) one object, which is our user.
+// if it doesn't exist (if there are no `rows` or `rows.length`), return null
 
-  // if it does:
-  // delete the 'password' key from the returned object
-  // get their posts (use getPostsByUser)
-  // then add the posts to the user object with key 'posts'
-  // return the user object
-
-
-
+// if it does:
+// delete the 'password' key from the returned object
+// get their posts (use getPostsByUser)
+// then add the posts to the user object with key 'posts'
+// return the user object
 
 module.exports = {
   client,
@@ -176,6 +176,5 @@ module.exports = {
   updatePost,
   getAllPosts,
   getPostsByUser,
-  getUserById
+  getUserById,
 };
-
