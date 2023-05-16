@@ -115,6 +115,22 @@ return rows;
     throw error;
   }
 }
+
+async function getPostsByUser(userId) {
+  try {
+    console.log("getting all posts by users")
+    const { rows } = await client.query(`
+      SELECT * FROM posts
+      WHERE "authorId"=$1;
+    `, [userId]);
+
+    console.log({rows});
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   client,
   getAllUsers,
@@ -122,5 +138,7 @@ module.exports = {
   updateUser,
   createPost,
   updatePost,
-  getAllPosts
+  getAllPosts,
+  getPostsByUser
 };
+
