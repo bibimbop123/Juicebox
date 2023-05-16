@@ -99,6 +99,22 @@ async function createPost({ authorId, title, content }) {
     throw error;
   }
 }
+async function getAllPosts() {
+  try {
+    console.log("getting all posts")
+    const { rows } = await client.query(
+      `SELECT * 
+        FROM posts;
+      `
+
+  )
+
+return rows;
+    }
+    catch (error) {
+    throw error;
+  }
+}
 module.exports = {
   client,
   getAllUsers,
@@ -106,4 +122,5 @@ module.exports = {
   updateUser,
   createPost,
   updatePost,
+  getAllPosts
 };

@@ -5,6 +5,7 @@ const {
   updateUser,
   updatePost,
   createPost,
+  getAllPosts,
 } = require("./index");
 
 async function dropTables() {
@@ -116,6 +117,7 @@ async function rebuildDB() {
     await createInitialUsers();
     await createInitialPost();
     await updateUser(1, { username: "andy" });
+
     console.log("updating posts");
     await updatePost(1, { content: "lorem ipsum" });
   } catch (error) {
@@ -137,7 +139,9 @@ async function testDB() {
       location: "Lesterville, KY",
     });
     console.log("Result:", updateUserResult);
-
+    console.log("calling getAllPosts")
+    const posts = await getAllPosts();
+    console.log("posts:", posts)
     console.log("Finished database tests!");
   } catch (error) {
     console.error("Error testing database!");
