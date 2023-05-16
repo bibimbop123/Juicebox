@@ -7,6 +7,7 @@ const {
   createPost,
   getAllPosts,
   getPostsByUser,
+  getUserById,
 } = require("./index");
 
 async function dropTables() {
@@ -122,6 +123,7 @@ async function rebuildDB() {
     console.log("updating posts");
     await updatePost(1, { content: "lorem ipsum" });
     await getPostsByUser(1)
+    await getUserById(1)
   } catch (error) {
     throw error;
   }
