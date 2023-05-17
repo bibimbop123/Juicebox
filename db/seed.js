@@ -60,8 +60,8 @@ async function createTables() {
           );
       `);
 
-        console.log("creatingTagTable");
-        console.log("postsTagsTable");
+    console.log("creatingTagTable");
+    console.log("postsTagsTable");
 
     console.log("Finished building tables!");
   } catch (error) {
@@ -69,25 +69,46 @@ async function createTables() {
     throw error;
   }
 }
+async function createTags(tagList) {
+  if (tagList.length === 0) {
+    return;
+  }
 
-// async function createPostsTable() {
-//   try {
-//     await client.query(`
-//       CREATE TABLE posts (
+  // need something like: $1), ($2), ($3
+  const insertValues = tagList.map((_, index) => `$${index + 1}`).join("), (");
+  // then we can use: (${ insertValues }) in our string template
 
-//         id SERIAL PRIMARY KEY,
-//         "authorId" INTEGER REFERENCES users(id),
-//         title VARCHAR(255) NOT NULL,
-//         content TEXT NOT NULL,
-//         active BOOLEAN DEFAULT true
-//         );
-//         `);
-//     console.log("finished creating posts");
-//   } catch (error) {
-//     console.error(error);
-//     throw error;
-//   }
-// }
+  // need something like $1, $2, $3
+  const selectValues = tagList.map((_, index) => `$${index + 1}`).join(", ");
+  // then we can use (${ selectValues }) in our string template
+
+  try {
+    // insert the tags, doing nothing on conflict
+    // returning nothing, we'll query after
+    await client.query(
+      `
+    INSERT INTO tags(name)
+    VALUES (${insertValues})
+    ON CONFLICT (name) DO NOTHING;
+    `,
+      tagList
+    );
+
+    // select all tags where the name is in our taglist
+    // return the rows from the query
+    const { rows } = await client.query(
+      `
+    SELECT * FROM tags
+    WHERE name
+    IN  (${selectValues});`,
+      tagList
+    );
+
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+}
 
 async function createInitialUsers() {
   try {
@@ -146,6 +167,7 @@ async function rebuildDB() {
     await updatePost(1, { content: "lorem ipsum" });
     await getPostsByUser(1);
     await getUserById(1);
+    await createTags(["tagList", "tag2"]);
   } catch (error) {
     throw error;
   }
