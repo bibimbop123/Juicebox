@@ -235,7 +235,7 @@ async function getPostById(postId) {
       WHERE id=$1;
     `, [post.authorId])
 
-    post.tags = tags.content;
+    post.tags = tags;
     post.author = author.name
 
     delete post.authorId;
