@@ -90,6 +90,12 @@ async function createInitialUsers() {
       name: "Joshua",
       location: "Upper East side",
     });
+    const Kashnipur = await createUser({
+      username: "Kashman",
+      password: "12345678",
+      name: "kashisking",
+      location: "Upper nawf side",
+    });
     // console.log(sandra);
     // console.log(glamgal);
 
@@ -101,12 +107,26 @@ async function createInitialUsers() {
 }
 
 async function createInitialPost() {
-  // console.log("creating initial posts");
+  console.log("creating initial posts");
   try {
+    const [albert, sandra, glamgal]= await getAllUsers()
     const post1 = await createPost({
       authorId: 1,
       title: "a great title",
       content: "we did it",
+      tags:["#happy", "#youcandoanything"]
+    });
+    const post2 =await createPost({
+      authorId: 2,
+      title: "fresh agua",
+      content: "quench your thirst",
+      tags:["#happy", "#worst-day-ever"]
+    });
+    const post3 =await createPost({
+      authorId: 3,
+      title: "canada",
+      content: "maplesyrup nation",
+      tags:["#happy","#youcandoanything", "#canmandoeverything"]
     });
     // console.log(post1);
     // console.log("finished creating posts");
@@ -115,29 +135,29 @@ async function createInitialPost() {
     throw error;
   }
 }
-async function createInitialTags() {
-  try {
-    console.log("Starting to create tags...");
+// async function createInitialTags() {
+//   try {
+//     console.log("Starting to create tags...");
 
-    const [happy, sad, inspo, catman] = await createTags([
-      '#happy', 
-      '#worst-day-ever', 
-      '#youcandoanything',
-      '#catmandoeverything'
-    ]);
+//     const [happy, sad, inspo, catman] = await createTags([
+//       '#happy', 
+//       '#worst-day-ever', 
+//       '#youcandoanything',
+//       '#catmandoeverything'
+//     ]);
 
-    const [postOne, postTwo, postThree] = await getAllPosts();
+//     const [postOne, postTwo, postThree] = await getAllPosts();
 
-    await addTagsToPost(postOne.id, [happy, inspo]);
-    await addTagsToPost(postTwo.id, [sad, inspo]);
-    await addTagsToPost(postThree.id, [happy, catman, inspo]);
+//     await addTagsToPost(postOne.id, [happy, inspo]);
+//     await addTagsToPost(postTwo.id, [sad, inspo]);
+//     await addTagsToPost(postThree.id, [happy, catman, inspo]);
 
-    console.log("Finished creating tags!");
-  } catch (error) {
-    console.log("Error creating tags!");
-    throw error;
-  }
-}
+//     console.log("Finished creating tags!");
+//   } catch (error) {
+//     console.log("Error creating tags!");
+//     throw error;
+//   }
+// }
 
 async function rebuildDB() {
   try {
@@ -157,8 +177,9 @@ async function rebuildDB() {
     await createTags(["tagList", "tag2"]);
     await getPostById(1);
     await createPostTag(1,1);
-    await createInitialTags();
+    // await createInitialTags();
     await addTagsToPost(1,["hello"]);
+    await createInitialPost()
   } catch (error) {
     throw error;
   }
