@@ -135,26 +135,27 @@ async function getPostsByUser(userId) {
 async function getUserById(id) {
   try {
     console.log("get user by Id");
-    const { rows } = await client.query(
+    const {
+      rows: [user],
+    } = await client.query(
       `
      SELECT * FROM users
      WHERE id = $1;
      `,
       [id]
     );
-    if (!{ rows }) {
+    if (!user) {
       return null;
-    } else {
-      delete rows[0].password;
-      rows.posts = await getPostsByUser(id);
-      console.log(rows);
-      return rows;
     }
+
+    delete user.password;
+    user.posts = await getPostsByUser(user.id);
+    console.log(user);
+    return user;
   } catch (error) {
     throw error;
   }
 }
-
 // first get the user (NOTE: Remember the query returns
 // (1) an object that contains
 // (2) a `rows` array that (in this case) will contain
