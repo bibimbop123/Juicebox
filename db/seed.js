@@ -12,7 +12,8 @@ const {
   getPostById,
   createPostTag,
   addTagsToPost,
-  getPostsByTagName
+  getPostsByTagName,
+  getUserByUsername,
 } = require("./index");
 
 async function dropTables() {
@@ -110,24 +111,24 @@ async function createInitialUsers() {
 async function createInitialPost() {
   console.log("creating initial posts");
   try {
-    const [albert, sandra, glamgal]= await getAllUsers()
+    const [albert, sandra, glamgal] = await getAllUsers();
     const post1 = await createPost({
       authorId: 1,
       title: "a great title",
       content: "we did it",
-      tags:["#happy", "#youcandoanything"]
+      tags: ["#happy", "#youcandoanything"],
     });
-    const post2 =await createPost({
+    const post2 = await createPost({
       authorId: 2,
       title: "fresh agua",
       content: "quench your thirst",
-      tags:["#happy", "#worst-day-ever"]
+      tags: ["#happy", "#worst-day-ever"],
     });
-    const post3 =await createPost({
+    const post3 = await createPost({
       authorId: 3,
       title: "canada",
       content: "maplesyrup nation",
-      tags:["#happy","#youcandoanything", "#canmandoeverything"]
+      tags: ["#happy", "#youcandoanything", "#canmandoeverything"],
     });
     // console.log(post1);
     // console.log("finished creating posts");
@@ -141,8 +142,8 @@ async function createInitialPost() {
 //     console.log("Starting to create tags...");
 
 //     const [happy, sad, inspo, catman] = await createTags([
-//       '#happy', 
-//       '#worst-day-ever', 
+//       '#happy',
+//       '#worst-day-ever',
 //       '#youcandoanything',
 //       '#catmandoeverything'
 //     ]);
@@ -177,11 +178,12 @@ async function rebuildDB() {
     await getUserById(1);
     await createTags(["tagList", "tag2"]);
     await getPostById(1);
-    await createPostTag(1,1);
+    await createPostTag(1, 1);
     // await createInitialTags();
-    await addTagsToPost(1,["hello"]);
-    await createInitialPost()
-    await getPostsByTagName()
+    await addTagsToPost(1, ["hello"]);
+    await createInitialPost();
+    await getPostsByTagName();
+    await getUserByUsername(username);
   } catch (error) {
     throw error;
   }

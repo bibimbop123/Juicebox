@@ -5,7 +5,7 @@ require("dotenv").config();
 // Before we start attaching our routers
 
 const jwt = require("jsonwebtoken");
-const { getUserById } = require("../db");
+const { getUserById, getUserByUsername } = require("../db");
 const { JWT_SECRET } = process.env;
 const express = require("express");
 const apiRouter = express.Router();
@@ -43,6 +43,15 @@ apiRouter.use(async (req, res, next) => {
       message: `Authorization token must start with ${prefix}`,
     });
   }
+});
+apiRouter.use((req, res, next) => {
+  if (req.user) {
+    console.log("User is set:", req.user);
+    const token = jwt.sign({ users }, process.env.JWT_SECRET);
+    console.log("token:", token);
+  }
+
+  next();
 });
 
 const usersRouter = require("./users");
