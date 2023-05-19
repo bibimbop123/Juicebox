@@ -22,11 +22,11 @@ postsRouter.get("/", async (req, res) => {
   });
 });
 
-postsRouter.post("/posts", requireUser, async (req, res, next) => {
-  //where do we call this?? post i meant like endpoint would we change this to
+postsRouter.post("/", requireUser, async (req, res, next) => {
   const { title, content, tags = "" } = req.body;
+
   const tagArr = tags.trim().split(/\s+/);
-  const postData = {};
+  const postData = { authorId, title, content };
 
   // only send the tags if there are some to send
   if (tagArr.length) {
@@ -34,28 +34,53 @@ postsRouter.post("/posts", requireUser, async (req, res, next) => {
   }
 
   try {
-    // postData.authorId = authorId;
-    postData.title = title;
-    postData.content = content;
-    //post data already exists
-    // add authorId, title, content to postData object
     const post = await createPost(postData);
     // this will create the post and the tags for us
-    // if the post comes back, res.send({ post });
-    // if post comes back/fails(is how im interpreting), it wants us to res.send({post})
-    //this one im alittle confused i think it wants us,
     if (post) {
       res.send({ post });
-      //so if we get to here and this doesnt work
-      //below should fire, if i understand this correctly
     } else {
-      throw error;
-      //maybe just throw error
+      next(error);
     }
-    //i think we are done with this function
+    // if the post comes back, res.send({ post });
     // otherwise, next an appropriate error object
   } catch ({ name, message }) {
     next({ name, message });
   }
 });
+
+postsRouter.patch("/:postId", requireUser, async (req, res, next) => {
+  const { postId } = req.params;
+  const { title, content, tags } = req.body;
+
+  const updateFields = {};
+
+  if (tags && tags.length > 0) {
+    updateFields.tags = tags.trim().split(/\s+/);
+  }
+
+  if (title) {
+    updateFields.title = title;
+  }
+
+  if (content) {
+    updateFields.content = content;
+  }
+
+  try {
+    const originalPost = await getPostById(postId);
+
+    if (originalPost.author.id === req.user.id) {
+      const updatedPost = await updatePost(postId, updateFields);
+      res.send({ post: updatedPost });
+    } else {
+      next({
+        name: "UnauthorizedUserError",
+        message: "You cannot update a post that is not yours",
+      });
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
+
 module.exports = postsRouter;
