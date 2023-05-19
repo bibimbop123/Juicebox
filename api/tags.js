@@ -8,6 +8,9 @@ tagsRouter.use((req, res, next) => {
 
   next();
 });
+//we know that api/posts exists
+//we know we can login
+//there is somewhere that needs an id, if i had to guess it would be DB end
 
 // tagsRouter.get('/', async ( req, res) => {
 //     const tags = await getAllTags();

@@ -12,6 +12,7 @@ usersRouter.use((req, res, next) => {
 });
 
 usersRouter.get("/", async (req, res) => {
+  console.log("hello");
   const users = await getAllUsers();
 
   res.send({
@@ -21,6 +22,7 @@ usersRouter.get("/", async (req, res) => {
 
 usersRouter.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
+  console.log("LOGIN =>", username, password);
 
   // request must have both
   if (!username || !password) {
@@ -52,6 +54,7 @@ usersRouter.post("/login", async (req, res, next) => {
 
 usersRouter.post("/register", async (req, res, next) => {
   const { username, password, name, location } = req.body;
+  console.log("WHAT IS THIS FUNCTION???", getUserByUsername);
 
   try {
     const _user = await getUserByUsername(username);

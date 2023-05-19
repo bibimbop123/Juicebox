@@ -115,19 +115,19 @@ async function createInitialPost() {
       authorId: 1,
       title: "a great title",
       content: "we did it",
-      // tags: ["#happy", "#youcandoanything"],
+      tags: ["#happy", "#youcandoanything"],
     });
     const post2 = await createPost({
       authorId: 2,
       title: "fresh agua",
       content: "quench your thirst",
-      // tags: ["#happy", "#worst-day-ever"],
+      tags: ["#happy", "#worst-day-ever"],
     });
     const post3 = await createPost({
       authorId: 3,
       title: "canada",
       content: "maplesyrup nation",
-      // tags: ["#happy", "#youcandoanything", "#canmandoeverything"],
+      tags: ["#happy", "#youcandoanything", "#canmandoeverything"],
     });
     // console.log(post1);
     // console.log("finished creating posts");

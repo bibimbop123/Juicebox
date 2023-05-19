@@ -20,6 +20,15 @@ apiRouter.use(async (req, res, next) => {
   const prefix = "Bearer ";
   const auth = req.header("Authorization");
 
+  apiRouter.use((req, res, next) => {
+    if (req.user) {
+      console.log("User is set:", req.user);
+      // const token = jwt.sign({ users }, process.env.JWT_SECRET);
+    }
+
+    next();
+  });
+
   if (!auth) {
     // nothing to see here
     next();
@@ -40,14 +49,6 @@ apiRouter.use(async (req, res, next) => {
       message: `Authorization token must start with ${prefix}`,
     });
   }
-});
-apiRouter.use((req, res, next) => {
-  if (req.user) {
-    console.log("User is set:", req.user);
-    // const token = jwt.sign({ users }, process.env.JWT_SECRET);
-  }
-
-  next();
 });
 
 const usersRouter = require("./users");
