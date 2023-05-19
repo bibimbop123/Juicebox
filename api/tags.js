@@ -1,7 +1,7 @@
 // api/users.js
-const express = require('express');
+const express = require("express");
 const tagsRouter = express.Router();
-const { getAllTags } = require('../db');
+const { getAllTags } = require("../db");
 
 tagsRouter.use((req, res, next) => {
   console.log("A request is being made to /users");
@@ -9,14 +9,12 @@ tagsRouter.use((req, res, next) => {
   next();
 });
 
+// tagsRouter.get('/', async ( req, res) => {
+//     const tags = await getAllTags();
 
-tagsRouter.get('/', async ( req, res) => {
-    const tags = await getAllTags();
+//     res.send({
+//       tags
+//     });
+//   });
 
-    res.send({
-      tags
-    });
-  });
-
-
-module.exports = tagsRouter, getAllTags;
+(module.exports = tagsRouter), getAllTags;

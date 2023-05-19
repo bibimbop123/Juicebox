@@ -21,7 +21,7 @@ async function dropTables() {
     console.log("Starting to drop tables...");
 
     await client.query(`
-        DROP TABLE IF EXISTS tags, post_tags, posts, users
+        DROP TABLE IF EXISTS  post_tags, posts, tags, users
       `);
 
     console.log("Finished dropping tables!");
@@ -30,7 +30,6 @@ async function dropTables() {
     throw error;
   }
 }
-
 async function createTables() {
   try {
     console.log("Starting to build tables...");
@@ -73,7 +72,7 @@ async function createTables() {
   } catch (error) {
     console.error("Error building tables!");
     throw error;
-  }
+  } // not posts are doubel but not tags
 }
 
 async function createInitialUsers() {
@@ -116,19 +115,19 @@ async function createInitialPost() {
       authorId: 1,
       title: "a great title",
       content: "we did it",
-      tags: ["#happy", "#youcandoanything"],
+      // tags: ["#happy", "#youcandoanything"],
     });
     const post2 = await createPost({
       authorId: 2,
       title: "fresh agua",
       content: "quench your thirst",
-      tags: ["#happy", "#worst-day-ever"],
+      // tags: ["#happy", "#worst-day-ever"],
     });
     const post3 = await createPost({
       authorId: 3,
       title: "canada",
       content: "maplesyrup nation",
-      tags: ["#happy", "#youcandoanything", "#canmandoeverything"],
+      // tags: ["#happy", "#youcandoanything", "#canmandoeverything"],
     });
     // console.log(post1);
     // console.log("finished creating posts");
@@ -137,29 +136,30 @@ async function createInitialPost() {
     throw error;
   }
 }
-// async function createInitialTags() {
-//   try {
-//     console.log("Starting to create tags...");
 
-//     const [happy, sad, inspo, catman] = await createTags([
-//       '#happy',
-//       '#worst-day-ever',
-//       '#youcandoanything',
-//       '#catmandoeverything'
-//     ]);
+async function createInitialTags() {
+  try {
+    console.log("Starting to create tags...");
 
-//     const [postOne, postTwo, postThree] = await getAllPosts();
+    const [happy, sad, inspo, catman] = await createTags([
+      "#happy",
+      "#worst-day-ever",
+      "#youcandoanything",
+      "#catmandoeverything",
+    ]);
 
-//     await addTagsToPost(postOne.id, [happy, inspo]);
-//     await addTagsToPost(postTwo.id, [sad, inspo]);
-//     await addTagsToPost(postThree.id, [happy, catman, inspo]);
+    const [postOne, postTwo, postThree] = await getAllPosts();
 
-//     console.log("Finished creating tags!");
-//   } catch (error) {
-//     console.log("Error creating tags!");
-//     throw error;
-//   }
-// }
+    await addTagsToPost(postOne.id, [happy, inspo]);
+    await addTagsToPost(postTwo.id, [sad, inspo]);
+    await addTagsToPost(postThree.id, [happy, catman, inspo]);
+
+    console.log("Finished creating tags!");
+  } catch (error) {
+    console.log("Error creating tags!");
+    throw error;
+  }
+}
 
 async function rebuildDB() {
   try {
@@ -167,56 +167,55 @@ async function rebuildDB() {
 
     await dropTables();
     await createTables();
-    // await createPostsTable();
+    // await createPostsTable(); //yea let me show you
     await createInitialUsers();
     await createInitialPost();
     await updateUser(1, { username: "andy" });
 
     // console.log("updating posts");
     await updatePost(1, { content: "lorem ipsum" });
-    await getPostsByUser(1);
-    await getUserById(1);
-    await createTags(["tagList", "tag2"]);
-    await getPostById(1);
+    // await getPostsByUser(1);
+    // await getUserById(1);
+    await createTags(["tagList"]);
+    // await getPostById(1);
     await createPostTag(1, 1);
     // await createInitialTags();
-    await addTagsToPost(1, ["hello"]);
-    await createInitialPost();
-    await getPostsByTagName();
-    await getUserByUsername(username);
+    // await addTagsToPost(1, ["hello"]);//found one there was double initialpost
+    await getPostsByTagName(); //welp looks like everything works now...
+    await getUserByUsername();
   } catch (error) {
     throw error;
   }
-}
+} //yea this is guided // im trying to figure out why our db or atleast mine doubles// we should clrean that out
+//testing has ended
+// async function testDB() {
+//   try {
+//     // console.log("Starting to test database...");
 
-async function testDB() {
-  try {
-    // console.log("Starting to test database...");
+//     // console.log("Calling getAllUsers");
+//     const users = await getAllUsers();
+//     // console.log("Result:", users);
 
-    // console.log("Calling getAllUsers");
-    const users = await getAllUsers();
-    // console.log("Result:", users);
-
-    // console.log("Calling updateUser on users[0]");
-    const updateUserResult = await updateUser(users[0].id, {
-      name: "Newname Sogood",
-      location: "Lesterville, KY",
-    });
-    // console.log("Result:", updateUserResult);
-    // console.log("calling getAllPosts")
-    const posts = await getAllPosts();
-    // console.log("posts:", posts)
-    // console.log("Finished database tests!");
-    console.log("Calling getPostsByTagName with #happy");
-    const postsWithHappy = await getPostsByTagName("#happy");
-    console.log("Result:", postsWithHappy);
-  } catch (error) {
-    console.error("Error testing database!");
-    throw error;
-  }
-}
+//     // console.log("Calling updateUser on users[0]");
+//     const updateUserResult = await updateUser(users[0].id, {
+//       name: "Newname Sogood",
+//       location: "Lesterville, KY",
+//     });
+//     // console.log("Result:", updateUserResult);
+//     // console.log("calling getAllPosts")
+//     const posts = await getAllPosts();
+//     // console.log("posts:", posts)
+//     // console.log("Finished database tests!");
+//     console.log("Calling getPostsByTagName with #happy");
+//     const postsWithHappy = await getPostsByTagName("#happy");
+//     console.log("Result:", postsWithHappy);
+//   } catch (error) {
+//     console.error("Error testing database!");
+//     throw error;
+//   }
+// }
 
 rebuildDB()
-  .then(testDB)
+  // .then(testDB)
   .catch(console.error)
   .finally(() => client.end());

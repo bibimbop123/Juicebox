@@ -63,5 +63,8 @@ apiRouter.use((error, req, res, next) => {
     message: error.message,
   });
 });
+//no env set up my b
 
 module.exports = apiRouter;
+//newest ff is 16 and thats coming out at somepoint
+//ff14 is a mmo thats really good

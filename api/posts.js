@@ -22,13 +22,11 @@ postsRouter.get("/", async (req, res) => {
   });
 });
 
-const { requireUser } = require("./utils");
-
-postsRouter.post("/", requireUser, async (req, res, next) => {
+postsRouter.post("/posts", requireUser, async (req, res, next) => {
+  //where do we call this?? post i meant like endpoint would we change this to
   const { title, content, tags = "" } = req.body;
-
   const tagArr = tags.trim().split(/\s+/);
-  const postData = { authorId, title, content };
+  const postData = {};
 
   // only send the tags if there are some to send
   if (tagArr.length) {
@@ -36,14 +34,25 @@ postsRouter.post("/", requireUser, async (req, res, next) => {
   }
 
   try {
+    // postData.authorId = authorId;
+    postData.title = title;
+    postData.content = content;
+    //post data already exists
+    // add authorId, title, content to postData object
     const post = await createPost(postData);
     // this will create the post and the tags for us
+    // if the post comes back, res.send({ post });
+    // if post comes back/fails(is how im interpreting), it wants us to res.send({post})
+    //this one im alittle confused i think it wants us,
     if (post) {
       res.send({ post });
+      //so if we get to here and this doesnt work
+      //below should fire, if i understand this correctly
     } else {
-      next(error);
+      throw error;
+      //maybe just throw error
     }
-    // if the post comes back, res.send({ post });
+    //i think we are done with this function
     // otherwise, next an appropriate error object
   } catch ({ name, message }) {
     next({ name, message });
