@@ -3,7 +3,7 @@ require("dotenv").config();
 
 // api/index.js
 // Before we start attaching our routers
-
+const jwt = require('jsonwebtoken');
 const { getUserById, getUserByUsername } = require("../db");
 const { JWT_SECRET } = process.env;
 const express = require("express");
@@ -36,6 +36,11 @@ apiRouter.use(async (req, res, next) => {
     const token = auth.slice(prefix.length);
 
     try {
+      //id was undefined so I added jsonwebtoken library to deserialize the auth token
+      //then letting me get id from it. Once the exception stopped happening and we got id for the user
+      //things worked just fine
+      const id = jwt.verify(token, JWT_SECRET).user.id;
+
       if (id) {
         req.user = await getUserById(id);
         next();
